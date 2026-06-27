@@ -1,0 +1,17 @@
+{
+  "name": "turphdeck",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Public portfolio pitch deck for the turph suite",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^4.0.0",
+    "svelte": "^5.0.0",
+    "vite": "^5.4.0"
+  }
+}

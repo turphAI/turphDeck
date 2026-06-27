@@ -1,0 +1,81 @@
+:root {
+  /* Warm editorial palette — inherited from turphdesigns.com (locked) */
+  --bg: #faf8f5;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --secondary: #6b6560;
+  --muted: #736e6b;
+  --border: #e8e4df;
+  --accent: #a65f3f;
+  --accent-soft: #f0ddd4;
+
+  /* Status — live vs planned must be visually unmissable (journal 018 hard rule) */
+  --live: #5a7d5a;
+  --building: #b07b3f;
+  --planned: #a8a29b;
+
+  --font-display: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-body: 'Newsreader', Georgia, serif;
+
+  /* 4px atom */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-18: 72px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1a1a1a;
+    --surface: #242220;
+    --text: #ede9e4;
+    --secondary: #a8a29b;
+    --muted: #8c857f;
+    --border: #34302c;
+    --accent: #c77b57;
+    --accent-soft: #8b4d35;
+
+    --live: #8fb38f;
+    --building: #d0a164;
+    --planned: #8c857f;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 24px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#app {
+  height: 100vh;
+}
+
+h1,
+h2,
+h3,
+.display {
+  font-family: var(--font-display);
+  line-height: 1.2;
+  font-weight: 600;
+  margin: 0;
+}

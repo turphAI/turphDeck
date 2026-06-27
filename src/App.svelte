@@ -3,9 +3,11 @@
   import Opener from './lib/slides/Opener.svelte'
   import Architecture from './lib/slides/Architecture.svelte'
   import OpsLayer from './lib/slides/OpsLayer.svelte'
+  import Foundation from './lib/slides/Foundation.svelte'
+  import Decisions from './lib/slides/Decisions.svelte'
   import Payoff from './lib/slides/Payoff.svelte'
 
-  const slides = [Opener, Architecture, OpsLayer, Payoff]
+  const slides = [Opener, Architecture, OpsLayer, Foundation, Decisions, Payoff]
   let index = $state(0)
   const Current = $derived(slides[index])
 
@@ -34,7 +36,7 @@
 
 <main>
   {#key index}
-    <section class="stage">
+    <section class="stage" class:opener-stage={index === 0}>
       <Current {content} />
     </section>
   {/key}
@@ -67,10 +69,17 @@
   .stage {
     height: 100vh;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: var(--space-18) var(--space-12);
+    justify-content: flex-start;
+    padding: 8vh var(--space-8) var(--space-8);
     animation: rise 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* The opener is the one slide that floats vertically centered. */
+  .stage.opener-stage {
+    justify-content: center;
+    padding: var(--space-8);
   }
 
   @keyframes rise {

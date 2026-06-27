@@ -13,10 +13,8 @@
 </script>
 
 <div class="slide">
-  <header>
-    <h2>{p.title}</h2>
-    <p class="lead">{p.body}</p>
-  </header>
+  <h2>{p.title}</h2>
+  <p class="lead">{p.body}</p>
 
   <div class="viz" aria-label={p.label}>
     <div class="core"></div>
@@ -35,29 +33,27 @@
 <style>
   .slide {
     width: 100%;
-    max-width: 960px;
+    max-width: var(--slab);
     display: flex;
     flex-direction: column;
     align-items: center;
-    text-align: center;
-  }
-
-  header {
-    max-width: 680px;
-    margin-bottom: var(--space-12);
+    text-align: left;
   }
 
   h2 {
+    align-self: flex-start;
     font-size: clamp(1.75rem, 3.5vw, 2.75rem);
     letter-spacing: -0.02em;
     margin: 0 0 var(--space-4);
   }
 
   .lead {
+    align-self: flex-start;
+    max-width: 600px;
     font-size: 1.125rem;
     line-height: 1.5;
     color: var(--secondary);
-    margin: 0;
+    margin: 0 0 var(--space-18);
   }
 
   .viz {

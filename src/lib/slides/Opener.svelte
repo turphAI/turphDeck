@@ -9,7 +9,7 @@
 
 <style>
   .opener {
-    max-width: 980px;
+    max-width: var(--slab);
   }
 
   h1 {

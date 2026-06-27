@@ -47,9 +47,24 @@ auto-detects Vite. Dev: `npm run dev`.
 - `src/App.svelte` — deck shell (keyboard + dot nav, light/dark).
 - `src/lib/slides/` — one component per slide: `Opener`, `Architecture`, `OpsLayer`, `Payoff`.
 
+## Running order
+
+Organized by depth — the substrate is a late *reveal*, not the lead (the opener leads with the
+problem, not the plumbing):
+
+1. **Opener** — the problem (what / why).
+2. **Surface & producers** — how it's shaped (consumer on top, producers bucketed by domain).
+3. **The ops layer** — agents that keep it current (the differentiator).
+4. **The foundation** — what it all runs on: one mini · tailnet · local-first LLM with cloud
+   fallback · no cloud → *private by construction*. Absorbs the proof strip pulled off the opener
+   (parked in `content.proof`).
+5. **Decisions I refused to make** — constraints as judgment (the discipline).
+6. **Watch it breathe** — the turphViz payoff (the close).
+
+A possible slide 7 (a quiet close: who + the public URL) is deferred until the body is right.
+
 ## Status
 
-**Skeleton built** — opener + the three load-bearing slides (producer/consumer, the agent ops
-layer, the turphViz payoff), both light and dark. Not yet committed. No GitHub remote or Vercel
-project yet — deliberate later steps. Next: the "Decisions I refused to make" slide, content
-fill, then deploy.
+Slides 1–2 settled. Slide 3 (ops layer) and 6 (payoff) built but not yet reviewed. Slides 4
+(foundation) and 5 (decisions) not yet built. No GitHub remote or Vercel project yet — deliberate
+later steps.

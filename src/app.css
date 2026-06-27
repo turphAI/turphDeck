@@ -26,6 +26,10 @@
   --space-8: 32px;
   --space-12: 48px;
   --space-18: 72px;
+
+  /* Shared content width — every non-opener slide uses this so the headline's
+     left edge stays put as you move through the deck (no bouncing). */
+  --slab: 1040px;
 }
 
 @media (prefers-color-scheme: dark) {

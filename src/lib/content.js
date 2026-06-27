@@ -13,12 +13,6 @@ export const content = {
     craft: 'I am designing and shipping the software to actually handle mine.',
   },
 
-  proof: [
-    { stat: 'LIVE', label: 'on one Mac mini, under launchd' },
-    { stat: 'tailnet', label: 'the only boundary — no app-layer auth' },
-    { stat: 'no cloud', label: 'no SaaS, no subscription, all mine' },
-  ],
-
   architecture: {
     // Headline flipped to match the top-down hierarchy: consumer first, then producers.
     title: 'One surface reads. Producers write.',
@@ -63,15 +57,72 @@ export const content = {
 
   ops: {
     title: 'A layer of agents keeps it current.',
-    body:
-      'Across all the apps sits a thin ops layer. Its agents sense the system and assess what changed — but the human stays in the decide seat.',
-    flow: ['sense', 'assess', 'decide'],
-    decideNote: 'Human in the decide seat — no auto-change.',
-    agents: [
-      { name: 'Navigator', note: 'fills the focus queue — next best work', status: 'live' },
-      { name: 'Foundation management', note: 'senses model / hardware / economic drift', status: 'live' },
-      { name: 'Freshness & quality sweeps', note: 'keeps the suite honest with itself', status: 'live' },
-      { name: 'Document concierge', note: 'intake · classify · route', status: 'planned' },
+    layerLabel: 'the ops layer',
+    // The layer runs four phases. Each phase names the agent that does its
+    // work, so the agent ↔ phase link is explicit. Consume is its own phase:
+    // proving the ecosystem with data — manual and outside calls — is real work.
+    phases: [
+      {
+        name: 'Sense',
+        blurb: 'watch the substrate move',
+        agents: [{ name: 'Foundation', note: 'model · hardware · economics', status: 'live' }],
+      },
+      {
+        name: 'Consume',
+        blurb: 'pull the world in',
+        agents: [{ name: 'Concierge', note: 'intake · classify · route', status: 'planned' }],
+      },
+      {
+        name: 'Assess',
+        blurb: 'judge what changed',
+        agents: [
+          { name: 'Sweeper', note: 'freshness · quality · health', status: 'live' },
+          { name: 'Navigator', note: 'next-best-work', status: 'live' },
+        ],
+      },
+      {
+        name: 'Decide',
+        blurb: 'the human acts',
+        human: true,
+        agents: [],
+      },
+    ],
+    decideNote: 'Agents sense, consume, and assess — the human alone decides. No auto-change.',
+  },
+
+  foundation: {
+    // The substrate reveal. One thesis — "private by construction" — with the
+    // stack as its evidence. Absorbs the proof strip pulled off the opener.
+    title: 'It all runs on one Mac mini.',
+    lead: 'Private by construction — not a feature bolted on, the architecture itself.',
+    pillars: [
+      { fact: 'One mini I own', consequence: 'no third-party custody of anything' },
+      { fact: 'Tailnet is the only door', consequence: 'no app-layer auth to get wrong' },
+      { fact: 'Local LLM, cloud only as fallback', consequence: 'data stays put for the routine work' },
+      { fact: 'No cloud, no SaaS, no subscription', consequence: 'nothing to breach off-premises' },
+    ],
+  },
+
+  decisions: {
+    title: 'Decisions I refused to make.',
+    lead: 'The discipline is the design — what I left out, on purpose.',
+    refusals: [
+      {
+        what: 'No SvelteKit, FastAPI, Tailwind, shadcn',
+        why: 'plain Vite · Svelte · Flask · CSS — the framework weight buys nothing here',
+      },
+      {
+        what: 'No accounts, multi-user, or sharing',
+        why: "it's a household consumer — complexity I'd never use",
+      },
+      {
+        what: 'No real-time, polling, or push',
+        why: "pull on open — engineering for a problem I don't have",
+      },
+      {
+        what: 'No producer logic in the consumer',
+        why: "the fix lives where the data lives — a decoupling I won't break",
+      },
     ],
   },
 

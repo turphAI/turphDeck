@@ -60,15 +60,15 @@
 <style>
   .slide {
     width: 100%;
-    max-width: 1080px;
+    max-width: var(--slab);
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: center;
+    align-items: stretch;
+    text-align: left;
   }
 
   h2 {
-    font-size: clamp(1.75rem, 3.8vw, 2.75rem);
+    font-size: clamp(1.75rem, 3.5vw, 2.75rem);
     letter-spacing: -0.02em;
     margin: 0 0 var(--space-12);
     white-space: nowrap;
@@ -242,6 +242,7 @@
   .legend {
     list-style: none;
     display: flex;
+    justify-content: center;
     gap: var(--space-8);
     margin: var(--space-12) 0 0;
     padding: 0;

@@ -1,257 +1,291 @@
 <script>
+  import { hierarchy, pack } from 'd3-hierarchy'
+
   let { content } = $props()
   const o = $derived(content.ops)
+
+  const SIZE = 820
+  const AGENT_VALUE = 8
+  const DECIDE_VALUE = 64
+  // Rotate the packed layout off-axis so it doesn't read as a grid.
+  const ANGLE = (21 * Math.PI) / 180
+
+  const packed = $derived.by(() => {
+    const data = {
+      name: o.layerLabel,
+      children: o.phases.map((ph) =>
+        ph.human
+          ? { name: ph.name, human: true, value: DECIDE_VALUE }
+          : { name: ph.name, children: ph.agents.map((a) => ({ name: a.name, value: AGENT_VALUE })) }
+      ),
+    }
+    return pack()
+      .size([SIZE, SIZE])
+      .padding(14)(
+        hierarchy(data)
+          .sum((d) => d.value || 0)
+          .sort((a, b) => (b.value || 0) - (a.value || 0))
+      )
+  })
+
+  const c = SIZE / 2
+  const nodes = $derived(
+    packed.descendants().map((n) => {
+      const dx = n.x - c
+      const dy = n.y - c
+      const ca = Math.cos(ANGLE)
+      const sa = Math.sin(ANGLE)
+      return {
+        x: c + dx * ca - dy * sa,
+        y: c + dx * sa + dy * ca,
+        r: n.r,
+        depth: n.depth,
+        data: n.data,
+        isLeaf: !n.children,
+      }
+    })
+  )
+  const agentR = $derived(nodes.find((n) => n.depth === 2)?.r ?? 60)
+  const decide = $derived(nodes.find((n) => n.data.human))
 </script>
 
-<div class="slide">
-  <h2>{o.title}</h2>
-
-  <!-- The ops layer, rendered as a layer: a contained band with the four
-       phases flowing across it and an agent operating inside each phase. -->
-  <div class="layer">
-    <span class="layer-label">{o.layerLabel}</span>
-
-    <div class="phases">
-      {#each o.phases as ph}
-        <div class="phase" class:terminal={ph.name === 'Decide'}>
-          <span class="phase-name">{ph.name}</span>
-          <span class="phase-blurb">{ph.blurb}</span>
-        </div>
-      {/each}
-    </div>
-
-    <div class="rail">
-      {#each o.phases as ph}
-        <span class="node-cell"><span class="node" class:terminal={ph.name === 'Decide'}></span></span>
-      {/each}
-    </div>
-
-    <div class="agents">
-      {#each o.phases as ph}
-        <div class="agent-col">
-          {#if ph.human}
-            <div class="human">
-              <span class="human-name">The human</span>
-              <span class="human-note">holds the decide seat</span>
-            </div>
-          {:else}
-            {#each ph.agents as ag}
-              <div class="agent">
-                <span class="agent-head">
-                  <span class="dot {ag.status}"></span>
-                  <span class="agent-name">{ag.name}</span>
-                </span>
-                <span class="agent-note">{ag.note}</span>
-              </div>
-            {/each}
-          {/if}
-        </div>
-      {/each}
-    </div>
+<div class="ops-hero">
+  <div class="ops-head">
+    <h2>{o.title}</h2>
   </div>
 
-  <p class="decide-note">{o.decideNote}</p>
+  <div class="ops-body">
+    <div class="viz-wrap">
+      <svg
+        class="hero-svg"
+        viewBox="0 0 {SIZE} {SIZE}"
+        preserveAspectRatio="xMidYMid meet"
+        role="img"
+        aria-label="The ops layer — an ecosystem of agents; the human decides"
+      >
+        {#each nodes as n}
+          {#if n.depth === 0}
+            <circle class="membrane" cx={n.x} cy={n.y} r={n.r} />
+          {:else if n.data.human}
+            <circle class="decide" cx={n.x} cy={n.y} r={n.r} />
+          {:else if !n.isLeaf}
+            <circle class="phase" cx={n.x} cy={n.y} r={n.r} />
+          {:else}
+            <circle class="agent-bubble" cx={n.x} cy={n.y} r={n.r} />
+          {/if}
+        {/each}
+
+        {#if decide}
+          <circle class="agent-bubble" cx={decide.x} cy={decide.y} r={agentR} />
+        {/if}
+
+        {#each nodes as n}
+          {#if n.depth === 0}
+            <!-- container label lives in the key card -->
+          {:else if n.data.human}
+            <text class="phase-name" x={n.x} y={n.y + n.r - 18}>{n.data.name}</text>
+          {:else if !n.isLeaf}
+            <text class="phase-name" x={n.x} y={n.y + n.r - 14}>{n.data.name}</text>
+          {:else}
+            <text class="agent-name" x={n.x} y={n.y + 5}>{n.data.name}</text>
+          {/if}
+        {/each}
+
+        {#if decide}
+          <text class="agent-name" x={decide.x} y={decide.y + 5}>Human</text>
+        {/if}
+      </svg>
+    </div>
+
+    <aside class="key-card">
+      <p class="key-title">{o.layerLabel}</p>
+      <ul class="key-list">
+        {#each o.phases as ph}
+          <li class="key-phase">
+            <span class="kp-name">{ph.name}</span>
+            <span class="kp-blurb">{ph.blurb}</span>
+            <ul class="key-agents">
+              {#if ph.human}
+                <li>
+                  <span class="ka-name">Human</span>
+                  <span class="ka-note">alone decides — no auto-change</span>
+                </li>
+              {:else}
+                {#each ph.agents as a}
+                  <li>
+                    <span class="ka-name">{a.name}</span>
+                    <span class="ka-note">{a.note}</span>
+                  </li>
+                {/each}
+              {/if}
+            </ul>
+          </li>
+        {/each}
+      </ul>
+    </aside>
+  </div>
 </div>
 
 <style>
-  .slide {
+  .ops-hero {
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .ops-head,
+  .ops-body {
     width: 100%;
-    max-width: var(--slab);
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
+    max-width: calc(var(--slab) + 2 * var(--space-8));
+    margin: 0 auto;
+    padding-left: var(--space-8);
+    padding-right: var(--space-8);
   }
 
-  h2 {
-    font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+  .ops-head {
+    padding-top: 8vh;
+    padding-bottom: var(--space-4);
+  }
+
+  .ops-head h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+    font-weight: 600;
     letter-spacing: -0.02em;
-    margin: 0 0 var(--space-12);
+    line-height: 1.2;
+    color: #fbf6f2;
+    margin: 0;
   }
 
-  /* The layer — a contained band the phases operate inside */
-  .layer {
-    position: relative;
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    background: color-mix(in srgb, var(--accent-soft) 22%, var(--surface));
-    padding: var(--space-12) var(--space-8) var(--space-8);
+  .ops-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-12);
+    padding-bottom: var(--space-8);
   }
 
-  .layer-label {
-    position: absolute;
-    top: calc(-1 * var(--space-3));
-    left: var(--space-8);
+  .viz-wrap {
+    flex: 1.65;
+    height: 100%;
+    min-width: 0;
+  }
+
+  .hero-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  text {
     font-family: var(--font-display);
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--accent);
-    background: var(--bg);
-    padding: 0 var(--space-3);
+    text-anchor: middle;
   }
 
-  /* Three aligned 4-column rows: phases, the rail, the agents */
-  .phases,
-  .agents {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+  /* Three tones of the accent hue. */
+  .membrane {
+    fill: rgba(247, 233, 224, 0.06);
+    stroke: rgba(247, 233, 224, 0.32);
+    stroke-width: 2px;
   }
-
   .phase {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
-    padding: 0 var(--space-3);
+    fill: rgba(247, 233, 224, 0.13);
   }
-
+  .agent-bubble {
+    fill: rgba(247, 233, 224, 0.27);
+  }
+  .decide {
+    fill: rgba(247, 233, 224, 0.2);
+    stroke: rgba(247, 233, 224, 0.42);
+    stroke-width: 2px;
+  }
   .phase-name {
-    font-family: var(--font-display);
-    font-size: 1.375rem;
+    font-size: 23px;
     font-weight: 600;
-    color: var(--text);
+    fill: #54281a;
   }
-
-  .phase.terminal .phase-name {
-    color: var(--accent);
-  }
-
-  .phase-blurb {
-    font-size: 13px;
-    color: var(--muted);
-  }
-
-  /* The rail — the pipeline flowing left → right through the layer */
-  .rail {
-    position: relative;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    margin: var(--space-6) 0;
-  }
-
-  .rail::before {
-    content: '';
-    position: absolute;
-    left: 6%;
-    right: 6%;
-    top: 50%;
-    height: 2px;
-    transform: translateY(-50%);
-    background: linear-gradient(to right, var(--border), var(--accent));
-  }
-
-  .node-cell {
-    display: flex;
-    justify-content: center;
-  }
-
-  .node {
-    width: 11px;
-    height: 11px;
-    border-radius: 50%;
-    background: var(--bg);
-    border: 2px solid var(--accent);
-    position: relative;
-    z-index: 1;
-  }
-
-  .node.terminal {
-    background: var(--accent);
-  }
-
-  .agent-col {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-    padding: 0 var(--space-3);
-  }
-
-  .agent {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
-  }
-
-  .agent-head {
-    display: flex;
-    align-items: baseline;
-    gap: var(--space-2);
-  }
-
   .agent-name {
-    font-family: var(--font-display);
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--text);
-  }
-
-  .agent-note {
     font-size: 13px;
-    color: var(--secondary);
-    padding-left: calc(8px + var(--space-2));
+    font-weight: 500;
+    fill: #54281a;
   }
 
-  /* The human owns Decide — distinct from the agents (no status dot) */
-  .human {
+  /* The key card — structure, label home, and agent explanations. */
+  .key-card {
+    flex: 1;
+    max-width: 380px;
+    align-self: center;
+    background: rgba(247, 233, 224, 0.12);
+    border: 1px solid rgba(247, 233, 224, 0.25);
+    border-radius: 16px;
+    padding: var(--space-8);
+  }
+
+  .key-title {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(74, 33, 20, 0.5);
+    margin: 0 0 var(--space-6);
+  }
+
+  .key-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: flex;
     flex-direction: column;
-    gap: var(--space-1);
+    gap: var(--space-5);
   }
 
-  .human-name {
+  .key-phase {
     display: flex;
-    align-items: baseline;
-    gap: var(--space-2);
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .kp-name {
     font-family: var(--font-display);
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--accent);
+    font-size: 17px;
+    font-weight: 600;
+    color: #3f1e12;
   }
 
-  .human-name::before {
-    content: '';
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--accent);
-  }
-
-  .human-note {
+  .kp-blurb {
     font-size: 13px;
-    color: var(--secondary);
-    padding-left: calc(8px + var(--space-2));
+    color: rgba(74, 33, 20, 0.58);
   }
 
-  .dot {
-    flex: none;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-  }
-  .dot.live {
-    background: var(--live);
-  }
-  .dot.planned {
-    background: transparent;
-    border: 1.5px solid var(--planned);
+  .key-agents {
+    list-style: none;
+    margin: var(--space-2) 0 0;
+    padding-left: var(--space-4);
+    border-left: 2px solid rgba(74, 33, 20, 0.18);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
   }
 
-  .decide-note {
-    text-align: center;
-    font-size: 14px;
-    color: var(--secondary);
-    margin: var(--space-8) 0 0;
+  .key-agents li {
+    display: flex;
+    flex-direction: column;
   }
 
-  @media (max-width: 760px) {
-    .phases,
-    .agents,
-    .rail {
-      grid-template-columns: repeat(2, 1fr);
-      gap: var(--space-6) 0;
-    }
-    .rail {
-      display: none;
-    }
+  .ka-name {
+    font-family: var(--font-display);
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #54281a;
+  }
+
+  .ka-note {
+    font-size: 12px;
+    color: rgba(74, 33, 20, 0.62);
   }
 </style>

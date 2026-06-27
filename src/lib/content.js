@@ -56,7 +56,7 @@ export const content = {
   },
 
   ops: {
-    title: 'A layer of agents keeps it current.',
+    title: 'A layer of agents keeps the suite current.',
     layerLabel: 'the ops layer',
     // The layer runs four phases. Each phase names the agent that does its
     // work, so the agent ↔ phase link is explicit. Consume is its own phase:

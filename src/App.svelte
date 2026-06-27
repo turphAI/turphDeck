@@ -8,6 +8,8 @@
   import Payoff from './lib/slides/Payoff.svelte'
 
   const slides = [Opener, Architecture, OpsLayer, Foundation, Decisions, Payoff]
+  // Slides that break out of the padded masthead and fill the viewport.
+  const bleedSlides = new Set([2]) // the ops layer — the dark hero
   let index = $state(0)
   const Current = $derived(slides[index])
 
@@ -34,9 +36,13 @@
 
 <svelte:window onkeydown={onKey} />
 
-<main>
+<main class:on-bleed={bleedSlides.has(index)}>
   {#key index}
-    <section class="stage" class:opener-stage={index === 0}>
+    <section
+      class="stage"
+      class:opener-stage={index === 0}
+      class:bleed={bleedSlides.has(index)}
+    >
       <Current {content} />
     </section>
   {/key}
@@ -67,6 +73,7 @@
   }
 
   .stage {
+    position: relative;
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -74,6 +81,11 @@
     justify-content: flex-start;
     padding: 8vh var(--space-8) var(--space-8);
     animation: rise 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Full-bleed hero slides own the whole viewport. */
+  .stage.bleed {
+    padding: 0;
   }
 
   /* The opener is the one slide that floats vertically centered. */
@@ -151,6 +163,21 @@
   .hint .count {
     font-weight: 600;
     color: var(--secondary);
+  }
+
+  /* On full-bleed accent slides, the nav goes light to stay legible. */
+  main.on-bleed .brand,
+  main.on-bleed .hint {
+    color: rgba(251, 246, 242, 0.7);
+  }
+  main.on-bleed .hint .count {
+    color: rgba(251, 246, 242, 0.92);
+  }
+  main.on-bleed .dots button {
+    background: rgba(251, 246, 242, 0.35);
+  }
+  main.on-bleed .dots button.active {
+    background: #fbf6f2;
   }
 
   @media (max-width: 640px) {

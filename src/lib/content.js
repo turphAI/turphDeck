@@ -64,17 +64,17 @@ export const content = {
     phases: [
       {
         name: 'Sense',
-        blurb: 'watch the substrate move',
+        blurb: 'Watch the substrate move',
         agents: [{ name: 'Foundation', note: 'model · hardware · economics', status: 'live' }],
       },
       {
         name: 'Consume',
-        blurb: 'pull the world in',
+        blurb: 'Pull the world in',
         agents: [{ name: 'Concierge', note: 'intake · classify · route', status: 'planned' }],
       },
       {
         name: 'Assess',
-        blurb: 'judge what changed',
+        blurb: 'Judge what changed',
         agents: [
           { name: 'Sweeper', note: 'freshness · quality · health', status: 'live' },
           { name: 'Navigator', note: 'next-best-work', status: 'live' },
@@ -82,7 +82,7 @@ export const content = {
       },
       {
         name: 'Decide',
-        blurb: 'the human acts',
+        blurb: 'The human acts',
         human: true,
         agents: [],
       },

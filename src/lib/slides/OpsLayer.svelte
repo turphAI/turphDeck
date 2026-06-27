@@ -5,48 +5,67 @@
   const o = $derived(content.ops)
 
   const SIZE = 820
-  const AGENT_VALUE = 8
-  const DECIDE_VALUE = 64
-  // Rotate the packed layout off-axis so it doesn't read as a grid.
-  const ANGLE = (21 * Math.PI) / 180
+  const PHASE_VALUE = 10 // Sense / Consume / Assess — all equal
+  const DECIDE_VALUE = 16 // a touch bigger, not overpowering
+  const ANGLE = (21 * Math.PI) / 180 // rotate off-axis so it isn't a grid
 
-  const packed = $derived.by(() => {
+  // Pack ONLY the phases, so phase size is independent of how many agents it
+  // holds. Agents are then drawn at one fixed radius and placed by hand.
+  const layout = $derived.by(() => {
     const data = {
       name: o.layerLabel,
-      children: o.phases.map((ph) =>
-        ph.human
-          ? { name: ph.name, human: true, value: DECIDE_VALUE }
-          : { name: ph.name, children: ph.agents.map((a) => ({ name: a.name, value: AGENT_VALUE })) }
-      ),
+      children: o.phases.map((ph) => ({
+        name: ph.name,
+        human: ph.human || false,
+        value: ph.human ? DECIDE_VALUE : PHASE_VALUE,
+      })),
     }
-    return pack()
+    const packed = pack()
       .size([SIZE, SIZE])
-      .padding(14)(
+      .padding(20)(
         hierarchy(data)
           .sum((d) => d.value || 0)
           .sort((a, b) => (b.value || 0) - (a.value || 0))
       )
-  })
 
-  const c = SIZE / 2
-  const nodes = $derived(
-    packed.descendants().map((n) => {
-      const dx = n.x - c
-      const dy = n.y - c
-      const ca = Math.cos(ANGLE)
-      const sa = Math.sin(ANGLE)
-      return {
-        x: c + dx * ca - dy * sa,
-        y: c + dx * sa + dy * ca,
-        r: n.r,
-        depth: n.depth,
-        data: n.data,
-        isLeaf: !n.children,
-      }
+    const c = SIZE / 2
+    const ca = Math.cos(ANGLE)
+    const sa = Math.sin(ANGLE)
+    const rot = (x, y) => {
+      const dx = x - c
+      const dy = y - c
+      return [c + dx * ca - dy * sa, c + dx * sa + dy * ca]
+    }
+
+    const nodes = packed.descendants().map((n) => {
+      const [x, y] = rot(n.x, n.y)
+      return { x, y, r: n.r, depth: n.depth, data: n.data }
     })
-  )
-  const agentR = $derived(nodes.find((n) => n.depth === 2)?.r ?? 60)
-  const decide = $derived(nodes.find((n) => n.data.human))
+
+    const phaseNodes = nodes.filter((n) => n.depth === 1)
+    const Rp = (phaseNodes.find((n) => !n.data.human) || phaseNodes[0]).r
+    const agentR = Rp * 0.36
+
+    const agents = []
+    for (const pn of phaseNodes) {
+      const ph = o.phases.find((p) => p.name === pn.data.name)
+      const len = Math.hypot(pn.x - c, pn.y - c) || 1
+      const ox = (pn.x - c) / len // outward (toward the membrane wall)
+      const oy = (pn.y - c) / len
+      const tx = -oy // tangent
+      const ty = ox
+      if (pn.data.human) {
+        agents.push({ x: pn.x + ox * pn.r * 0.45, y: pn.y + oy * pn.r * 0.45, name: 'Human' })
+      } else if (ph.agents.length === 1) {
+        agents.push({ x: pn.x + ox * pn.r * 0.34, y: pn.y + oy * pn.r * 0.34, name: ph.agents[0].name })
+      } else {
+        agents.push({ x: pn.x + tx * pn.r * 0.42, y: pn.y + ty * pn.r * 0.42, name: ph.agents[0].name })
+        agents.push({ x: pn.x - tx * pn.r * 0.42, y: pn.y - ty * pn.r * 0.42, name: ph.agents[1].name })
+      }
+    }
+
+    return { nodes, agentR, agents }
+  })
 </script>
 
 <div class="ops-hero">
@@ -63,37 +82,29 @@
         role="img"
         aria-label="The ops layer — an ecosystem of agents; the human decides"
       >
-        {#each nodes as n}
+        {#each layout.nodes as n}
           {#if n.depth === 0}
             <circle class="membrane" cx={n.x} cy={n.y} r={n.r} />
           {:else if n.data.human}
             <circle class="decide" cx={n.x} cy={n.y} r={n.r} />
-          {:else if !n.isLeaf}
+          {:else}
             <circle class="phase" cx={n.x} cy={n.y} r={n.r} />
-          {:else}
-            <circle class="agent-bubble" cx={n.x} cy={n.y} r={n.r} />
           {/if}
         {/each}
 
-        {#if decide}
-          <circle class="agent-bubble" cx={decide.x} cy={decide.y} r={agentR} />
-        {/if}
+        {#each layout.agents as a}
+          <circle class="agent-bubble" cx={a.x} cy={a.y} r={layout.agentR} />
+        {/each}
 
-        {#each nodes as n}
-          {#if n.depth === 0}
-            <!-- container label lives in the key card -->
-          {:else if n.data.human}
-            <text class="phase-name" x={n.x} y={n.y + n.r - 18}>{n.data.name}</text>
-          {:else if !n.isLeaf}
+        {#each layout.nodes as n}
+          {#if n.depth === 1}
             <text class="phase-name" x={n.x} y={n.y + n.r - 14}>{n.data.name}</text>
-          {:else}
-            <text class="agent-name" x={n.x} y={n.y + 5}>{n.data.name}</text>
           {/if}
         {/each}
 
-        {#if decide}
-          <text class="agent-name" x={decide.x} y={decide.y + 5}>Human</text>
-        {/if}
+        {#each layout.agents as a}
+          <text class="agent-name" x={a.x} y={a.y + 5}>{a.name}</text>
+        {/each}
       </svg>
     </div>
 
@@ -186,7 +197,6 @@
     text-anchor: middle;
   }
 
-  /* Three tones of the accent hue. */
   .membrane {
     fill: rgba(247, 233, 224, 0.06);
     stroke: rgba(247, 233, 224, 0.32);
@@ -214,13 +224,13 @@
     fill: #54281a;
   }
 
-  /* The key card — structure, label home, and agent explanations. */
+  /* The key card — a warm, readable panel (not pure white). */
   .key-card {
     flex: 1;
     max-width: 380px;
     align-self: center;
-    background: rgba(247, 233, 224, 0.12);
-    border: 1px solid rgba(247, 233, 224, 0.25);
+    background: rgba(249, 240, 233, 0.9);
+    border: 1px solid rgba(90, 50, 35, 0.12);
     border-radius: 16px;
     padding: var(--space-8);
   }
@@ -231,42 +241,45 @@
     font-weight: 600;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: rgba(74, 33, 20, 0.5);
+    color: rgba(90, 50, 35, 0.62);
     margin: 0 0 var(--space-6);
   }
 
+  /* Inter-phase gap is the largest space — it separates the groups. */
   .key-list {
     list-style: none;
     margin: 0;
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: var(--space-5);
+    gap: var(--space-6);
   }
 
   .key-phase {
     display: flex;
     flex-direction: column;
-    gap: 2px;
   }
 
   .kp-name {
     font-family: var(--font-display);
     font-size: 17px;
     font-weight: 600;
-    color: #3f1e12;
+    line-height: 1.2;
+    color: #3a1c10;
   }
 
   .kp-blurb {
     font-size: 13px;
-    color: rgba(74, 33, 20, 0.58);
+    line-height: 1.3;
+    color: rgba(80, 48, 34, 0.74);
   }
 
+  /* No rule line — indentation + proximity carry the nesting. Agents sit
+     closer to their phase (above) than to the next phase (below). */
   .key-agents {
     list-style: none;
     margin: var(--space-2) 0 0;
     padding-left: var(--space-4);
-    border-left: 2px solid rgba(74, 33, 20, 0.18);
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
@@ -281,11 +294,13 @@
     font-family: var(--font-display);
     font-size: 13.5px;
     font-weight: 600;
-    color: #54281a;
+    line-height: 1.25;
+    color: #4a2114;
   }
 
   .ka-note {
-    font-size: 12px;
-    color: rgba(74, 33, 20, 0.62);
+    font-size: 12.5px;
+    line-height: 1.3;
+    color: rgba(80, 48, 34, 0.72);
   }
 </style>

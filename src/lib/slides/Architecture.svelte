@@ -6,35 +6,46 @@
 </script>
 
 <div class="slide">
-  <header>
-    <h2>{a.title}</h2>
-    <p class="lead">{a.body}</p>
-  </header>
+  <h2>{a.title}</h2>
 
   <div class="flow">
-    <div class="col producers">
-      <p class="col-head">Producers</p>
-      <ul>
-        {#each a.producers as p}
-          <li>
-            <span class="dot {p.status}"></span>
-            <span class="name">{p.name}</span>
-            {#if p.note}<span class="note">{p.note}</span>{/if}
-          </li>
+    <!-- consumer on top -->
+    <div class="tier">
+      <span class="role">Consumer</span>
+      <div class="consumer-card">
+        <span class="cname">{a.consumer.name}</span>
+        <span class="cnote">{a.consumer.note}</span>
+      </div>
+    </div>
+
+    <!-- contract connector (the symmetric API) -->
+    <div class="contract">
+      <span class="seg"></span>
+      <span class="pill">{a.contract}</span>
+      <span class="seg"></span>
+    </div>
+    <p class="contract-note">{a.contractNote}</p>
+
+    <!-- producers below, bucketed by the opener's four problems -->
+    <div class="tier producers">
+      <span class="role">Producers</span>
+      <div class="buckets">
+        {#each a.categories as cat}
+          <div class="bucket">
+            <span class="problem">{cat.problem}</span>
+            <ul>
+              {#each cat.apps as app}
+                <li>
+                  <span class="dot {app.status}"></span>
+                  <span class="app">
+                    <span class="name">{app.name}</span>
+                    <span class="note">{app.note}</span>
+                  </span>
+                </li>
+              {/each}
+            </ul>
+          </div>
         {/each}
-      </ul>
-    </div>
-
-    <div class="arrow" aria-hidden="true">
-      <span class="contract">{a.contract}</span>
-      <span class="line"></span>
-    </div>
-
-    <div class="col surface">
-      <p class="col-head">Consumer</p>
-      <div class="surface-card">
-        <span class="surface-name">turph</span>
-        <span class="surface-note">{a.surface}</span>
       </div>
     </div>
   </div>
@@ -50,60 +61,157 @@
   .slide {
     width: 100%;
     max-width: 1080px;
-  }
-
-  header {
-    max-width: 720px;
-    margin-bottom: var(--space-12);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
   }
 
   h2 {
-    font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+    font-size: clamp(1.75rem, 3.8vw, 2.75rem);
     letter-spacing: -0.02em;
-    margin: 0 0 var(--space-4);
-  }
-
-  .lead {
-    font-size: 1.125rem;
-    line-height: 1.5;
-    color: var(--secondary);
-    margin: 0;
+    margin: 0 0 var(--space-12);
+    white-space: nowrap;
   }
 
   .flow {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: var(--space-8);
+    width: 100%;
   }
 
-  .col-head {
+  .tier {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .role {
     font-family: var(--font-display);
     font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--muted);
-    margin: 0 0 var(--space-4);
   }
 
-  .producers ul {
+  /* Consumer — the prominent card at the top */
+  .consumer-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--accent);
+    border-radius: 12px;
+    padding: var(--space-6) var(--space-12);
+    min-width: 320px;
+  }
+
+  .cname {
+    font-family: var(--font-display);
+    font-size: 1.625rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .cnote {
+    font-size: 14px;
+    color: var(--secondary);
+  }
+
+  /* Contract connector — the symmetric API, enlarged */
+  .contract {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .seg {
+    width: 2px;
+    height: var(--space-6);
+    background: var(--border);
+  }
+
+  .pill {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: var(--space-2) var(--space-6);
+    border-radius: 999px;
+    white-space: nowrap;
+    margin: var(--space-1) 0;
+  }
+
+  .contract-note {
+    font-size: 13px;
+    color: var(--muted);
+    margin: var(--space-3) 0 var(--space-8);
+  }
+
+  /* Producers — bucketed by the opener's problems */
+  .producers {
+    width: 100%;
+  }
+
+  .buckets {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-8);
+    width: 100%;
+    max-width: 980px;
+    margin-top: var(--space-2);
+    text-align: left;
+  }
+
+  .bucket {
+    flex: 1 1 150px;
+    min-width: 140px;
+    max-width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .problem {
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .bucket ul {
     list-style: none;
     margin: 0;
     padding: 0;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-3) var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
   }
 
-  .producers li {
+  .bucket li {
     display: flex;
-    align-items: baseline;
     gap: var(--space-2);
-    font-family: var(--font-display);
+  }
+
+  .app {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
   }
 
   .name {
+    font-family: var(--font-display);
+    font-size: 1rem;
     font-weight: 600;
     color: var(--text);
   }
@@ -118,7 +226,7 @@
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    transform: translateY(-1px);
+    margin-top: 7px;
   }
   .dot.live {
     background: var(--live);
@@ -129,53 +237,6 @@
   .dot.planned {
     background: transparent;
     border: 1.5px solid var(--planned);
-  }
-
-  .arrow {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-2);
-    min-width: 180px;
-  }
-
-  .contract {
-    font-family: var(--font-display);
-    font-size: 12px;
-    color: var(--accent);
-    background: var(--accent-soft);
-    padding: var(--space-1) var(--space-3);
-    border-radius: 999px;
-    white-space: nowrap;
-  }
-
-  .line {
-    width: 100%;
-    height: 2px;
-    background: linear-gradient(to right, transparent, var(--border), var(--accent));
-  }
-
-  .surface-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--accent);
-    border-radius: 10px;
-    padding: var(--space-6);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-  }
-
-  .surface-name {
-    font-family: var(--font-display);
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--text);
-  }
-
-  .surface-note {
-    font-size: 14px;
-    color: var(--secondary);
   }
 
   .legend {
@@ -194,18 +255,19 @@
     font-size: 13px;
     color: var(--secondary);
   }
+  .legend .dot {
+    margin-top: 0;
+  }
 
   @media (max-width: 760px) {
-    .flow {
-      grid-template-columns: 1fr;
+    h2 {
+      white-space: normal;
+    }
+    .buckets {
       gap: var(--space-6);
     }
-    .arrow {
-      flex-direction: row;
-      min-width: 0;
-    }
-    .arrow .line {
-      display: none;
+    .consumer-card {
+      padding: var(--space-6) var(--space-8);
     }
   }
 </style>

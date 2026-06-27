@@ -20,21 +20,45 @@ export const content = {
   ],
 
   architecture: {
-    title: 'Producers write. One surface reads.',
-    body:
-      'Each app is an independent producer that writes artifacts to disk. turph is the single consumer — it only reads, over one symmetric API contract. No producer knows another exists.',
-    producers: [
-      { name: 'News', note: 'Gmail digest', status: 'live' },
-      { name: 'Portfolio', note: 'Fidelity look-through', status: 'live' },
-      { name: 'Insurance', note: 'policy reviews', status: 'live' },
-      { name: 'Witness', note: 'medication journey', status: 'live' },
-      { name: 'Utilities', note: 'household spend', status: 'live' },
-      { name: 'ReLo', note: 'relocation', status: 'building' },
-      { name: 'Designs', note: 'portfolio', status: 'planned' },
-      { name: 'Retire', note: 'planning', status: 'planned' },
-    ],
+    // Headline flipped to match the top-down hierarchy: consumer first, then producers.
+    title: 'One surface reads. Producers write.',
+    consumer: {
+      name: 'turph',
+      note: 'one tabbed surface · tailnet-only · on your phone',
+    },
     contract: 'GET /api/<project>/recent · /<id>',
-    surface: 'turph — one tabbed surface · tailnet-only · on your phone',
+    contractNote: 'one symmetric contract — no producer knows another exists',
+    // Producers bucketed by domain. Our own categories — chosen to fit the apps
+    // and rhyme with the opener, not match it exactly. Fuzzy on purpose.
+    categories: [
+      {
+        problem: 'Finance',
+        apps: [
+          { name: 'Portfolio', note: 'Fidelity look-through', status: 'live' },
+          { name: 'Utilities', note: 'household spend', status: 'live' },
+          { name: 'Insurance', note: 'auto & home policies', status: 'live' },
+        ],
+      },
+      {
+        problem: 'Health',
+        apps: [{ name: 'Witness', note: 'medication journey', status: 'live' }],
+      },
+      {
+        problem: 'Retirement',
+        apps: [
+          { name: 'Retire', note: 'planning', status: 'planned' },
+          { name: 'ReLo', note: 'relocation', status: 'building' },
+        ],
+      },
+      {
+        problem: 'Information',
+        apps: [{ name: 'News', note: 'daily digest', status: 'live' }],
+      },
+      {
+        problem: 'Design',
+        apps: [{ name: 'Designs', note: 'creative portfolio', status: 'planned' }],
+      },
+    ],
   },
 
   ops: {

@@ -39,6 +39,8 @@
     </section>
   {/key}
 
+  <div class="brand">{content.kicker}</div>
+
   <nav class="dots" aria-label="slide navigation">
     {#each slides as _, i}
       <button
@@ -80,6 +82,17 @@
       opacity: 1;
       transform: translateY(0);
     }
+  }
+
+  .brand {
+    position: fixed;
+    left: var(--space-8);
+    bottom: var(--space-8);
+    font-family: var(--font-display);
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    color: var(--muted);
+    z-index: 10;
   }
 
   .dots {
@@ -136,6 +149,9 @@
       padding: var(--space-12) var(--space-6);
     }
     .hint .keys {
+      display: none;
+    }
+    .brand {
       display: none;
     }
   }

@@ -6,8 +6,9 @@
   import Foundation from './lib/slides/Foundation.svelte'
   import Decisions from './lib/slides/Decisions.svelte'
   import Payoff from './lib/slides/Payoff.svelte'
+  import Close from './lib/slides/Close.svelte'
 
-  const slides = [Opener, Architecture, OpsLayer, Foundation, Decisions, Payoff]
+  const slides = [Opener, Architecture, OpsLayer, Foundation, Decisions, Payoff, Close]
   // Slides that break out of the padded masthead and fill the viewport.
   const bleedSlides = new Set([2, 5]) // the ops layer + the turphViz payoff
   let index = $state(0)
@@ -40,7 +41,7 @@
   {#key index}
     <section
       class="stage"
-      class:opener-stage={index === 0}
+      class:centered-stage={index === 0 || index === slides.length - 1}
       class:bleed={bleedSlides.has(index)}
     >
       <Current {content} />
@@ -88,8 +89,8 @@
     padding: 0;
   }
 
-  /* The opener is the one slide that floats vertically centered. */
-  .stage.opener-stage {
+  /* The opener and the close float vertically centered (bookends). */
+  .stage.centered-stage {
     justify-content: center;
     padding: var(--space-8);
   }

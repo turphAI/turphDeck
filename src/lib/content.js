@@ -149,4 +149,15 @@ export const content = {
       "You've seen the architecture. Here it is alive — every run, every signal, rendered as a living field.",
     label: 'turphViz — live signal field',
   },
+
+  close: {
+    // Callback to the opener's "I am designing and shipping…" — resolves the arc.
+    signoff: 'Still designing. Still shipping.',
+    name: 'Tom Murphy',
+    links: [
+      { label: 'turphs.ai@gmail.com', href: 'mailto:turphs.ai@gmail.com' },
+      { label: 'github.com/turphAI', href: 'https://github.com/turphAI' },
+      { label: 'turph-deck.vercel.app', href: 'https://turph-deck.vercel.app' },
+    ],
+  },
 }

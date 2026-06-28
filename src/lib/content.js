@@ -122,24 +122,23 @@ export const content = {
   },
 
   decisions: {
-    title: 'Decisions I refused to make.',
-    lead: 'The discipline is the design — what I left out, on purpose.',
+    title: 'Discipline by design.',
     refusals: [
       {
         what: 'No SvelteKit, FastAPI, Tailwind, shadcn',
-        why: 'plain Vite · Svelte · Flask · CSS — the framework weight buys nothing here',
+        why: 'Plain Vite · Svelte · Flask · CSS — the framework weight buys nothing here.',
       },
       {
         what: 'No accounts, multi-user, or sharing',
-        why: "it's a household consumer — complexity I'd never use",
+        why: "It's a household consumer — complexity I'd never use.",
       },
       {
         what: 'No real-time, polling, or push',
-        why: "pull on open — engineering for a problem I don't have",
+        why: "Pull on open — engineering for a problem I don't have.",
       },
       {
         what: 'No producer logic in the consumer',
-        why: "the fix lives where the data lives — a decoupling I won't break",
+        why: "The fix lives where the data lives — a decoupling I won't break.",
       },
     ],
   },

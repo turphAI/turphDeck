@@ -4,14 +4,11 @@
 </script>
 
 <div class="slide">
-  <header>
-    <h2>{d.title}</h2>
-    <p class="lead">{d.lead}</p>
-  </header>
+  <h2>{d.title}</h2>
 
   <ul class="refusals">
     {#each d.refusals as r}
-      <li>
+      <li class="card">
         <span class="what">{r.what}</span>
         <span class="why">{r.why}</span>
       </li>
@@ -23,43 +20,38 @@
   .slide {
     width: 100%;
     max-width: var(--slab);
-  }
-
-  header {
-    margin-bottom: var(--space-12);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
   }
 
   h2 {
     font-size: clamp(1.75rem, 3.5vw, 2.75rem);
     letter-spacing: -0.02em;
-    margin: 0 0 var(--space-4);
-  }
-
-  .lead {
-    font-family: var(--font-display);
-    font-size: clamp(1.125rem, 1.8vw, 1.375rem);
-    font-weight: 500;
-    line-height: 1.4;
-    color: var(--accent);
     margin: 0;
-    max-width: 600px;
   }
 
+  /* Cards live in the space below the headline, vertically centered. */
   .refusals {
     list-style: none;
     margin: 0;
     padding: 0;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-8) var(--space-12);
+    flex: 1;
+    max-width: 620px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-4);
   }
 
-  .refusals li {
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: var(--space-6);
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
-    padding-left: var(--space-4);
-    border-left: 2px solid var(--border);
   }
 
   .what {
@@ -71,14 +63,7 @@
 
   .why {
     font-size: 0.9375rem;
-    line-height: 1.45;
+    line-height: 1.5;
     color: var(--secondary);
-  }
-
-  @media (max-width: 700px) {
-    .refusals {
-      grid-template-columns: 1fr;
-      gap: var(--space-6);
-    }
   }
 </style>

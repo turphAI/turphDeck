@@ -52,19 +52,21 @@ auto-detects Vite. Dev: `npm run dev`.
 Organized by depth — the substrate is a late *reveal*, not the lead (the opener leads with the
 problem, not the plumbing):
 
-1. **Opener** — the problem (what / why).
-2. **Surface & producers** — how it's shaped (consumer on top, producers bucketed by domain).
-3. **The ops layer** — agents that keep it current (the differentiator).
-4. **The foundation** — what it all runs on: one mini · tailnet · local-first LLM with cloud
-   fallback · no cloud → *private by construction*. Absorbs the proof strip pulled off the opener
-   (parked in `content.proof`).
-5. **Decisions I refused to make** — constraints as judgment (the discipline).
-6. **Watch it breathe** — the turphViz payoff (the close).
+1. **Opener** — the problem (what / why). Left-aligned, vertically centered (the one exception).
+2. **Surface & producers** — consumer on top, producers bucketed by domain (Finance / Health /
+   Retirement / Information / Design).
+3. **The ops layer** — the showcase. A full-bleed dark hero: a d3-hierarchy circle-packed
+   ecosystem (Sense / Consume / Assess / Decide, agents nested, the Human decides) + a key card.
+4. **The foundation** — *Private by construction.* Four icon cards: 1 Mac Mini · Tailnet ·
+   Local LLM (Qwen) · No cloud.
+5. **Discipline by design** — deliberate constraints as a centered, stacked card ledger.
+6. **And you can watch it breathe** — full-bleed turphViz video (`public/turphviz-loop.mp4`),
+   the real signal field looping. The close.
 
-A possible slide 7 (a quiet close: who + the public URL) is deferred until the body is right.
+A possible slide 7 (a quiet close: who + the public URL) is still deferred.
 
 ## Status
 
-Slides 1–2 settled. Slide 3 (ops layer) and 6 (payoff) built but not yet reviewed. Slides 4
-(foundation) and 5 (decisions) not yet built. No GitHub remote or Vercel project yet — deliberate
-later steps.
+**Body complete** — all six slides built with real content and committed. Light/dark aware;
+two full-bleed dark heroes (3 and 6) flip the nav light. No GitHub remote or Vercel project yet —
+those are the remaining steps, plus the optional slide 7 close.

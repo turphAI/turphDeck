@@ -9,7 +9,7 @@
 
   const slides = [Opener, Architecture, OpsLayer, Foundation, Decisions, Payoff]
   // Slides that break out of the padded masthead and fill the viewport.
-  const bleedSlides = new Set([2]) // the ops layer — the dark hero
+  const bleedSlides = new Set([2, 5]) // the ops layer + the turphViz payoff
   let index = $state(0)
   const Current = $derived(slides[index])
 

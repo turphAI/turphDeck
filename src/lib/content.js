@@ -91,15 +91,33 @@ export const content = {
   },
 
   foundation: {
-    // The substrate reveal. One thesis — "private by construction" — with the
-    // stack as its evidence. Absorbs the proof strip pulled off the opener.
-    title: 'It all runs on one Mac mini.',
-    lead: 'Private by construction — not a feature bolted on, the architecture itself.',
+    // The message is privacy/security; the four pillars are the evidence.
+    title: 'Private by construction.',
     pillars: [
-      { fact: 'One mini I own', consequence: 'no third-party custody of anything' },
-      { fact: 'Tailnet is the only door', consequence: 'no app-layer auth to get wrong' },
-      { fact: 'Local LLM, cloud only as fallback', consequence: 'data stays put for the routine work' },
-      { fact: 'No cloud, no SaaS, no subscription', consequence: 'nothing to breach off-premises' },
+      {
+        icon: 'mini',
+        label: '1 Mac Mini',
+        blurb:
+          "Everything runs on a single Mac mini in my house — the apps, the data, the agents. No servers I don't own, no third-party custody of anything.",
+      },
+      {
+        icon: 'shield',
+        label: 'Tailnet is the only door',
+        blurb:
+          "Tailscale is the only way in. The whole suite is invisible to the public internet, so there's no app-layer auth to build, secure, or get wrong.",
+      },
+      {
+        icon: 'chip',
+        label: 'Local LLM · Qwen',
+        blurb:
+          'Routine reasoning runs on a local Qwen model — nothing leaves the mini. Only the heaviest work falls back to a cloud model, and only when it must.',
+      },
+      {
+        icon: 'cloud',
+        label: 'No cloud, no SaaS',
+        blurb:
+          "No cloud storage, no SaaS, no subscriptions. Nothing is hosted elsewhere to breach, leak, or hold my data hostage — it's all mine.",
+      },
     ],
   },
 

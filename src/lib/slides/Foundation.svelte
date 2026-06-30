@@ -1,6 +1,9 @@
 <script>
+  import SwipeDots from '../SwipeDots.svelte'
+
   let { content } = $props()
   const f = $derived(content.foundation)
+  let cardsEl = $state()
 </script>
 
 {#snippet icon(id)}
@@ -36,7 +39,7 @@
 <div class="slide">
   <h2>{f.title}</h2>
 
-  <div class="cards">
+  <div class="cards" bind:this={cardsEl}>
     {#each f.pillars as p}
       <div class="card">
         <span class="card-badge">{@render icon(p.icon)}</span>
@@ -45,6 +48,8 @@
       </div>
     {/each}
   </div>
+
+  <SwipeDots el={cardsEl} count={f.pillars.length} />
 </div>
 
 <style>
@@ -111,6 +116,30 @@
     .cards {
       grid-template-columns: repeat(2, 1fr);
       gap: var(--space-4);
+    }
+  }
+
+  /* Phone: one pillar fills the width, swipe to the next. A sliver of the next
+     card peeks past the edge as the affordance to swipe. */
+  @media (max-width: 640px) {
+    .cards {
+      display: flex;
+      grid-template-columns: none;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      gap: var(--space-4);
+      /* Bleed the track to the screen edges, then pad it back in so the first
+         card still lines up with the headline. */
+      margin-inline: calc(-1 * var(--space-6));
+      padding-inline: var(--space-6);
+      scrollbar-width: none;
+    }
+    .cards::-webkit-scrollbar {
+      display: none;
+    }
+    .card {
+      flex: 0 0 80%;
+      scroll-snap-align: center;
     }
   }
 </style>

@@ -63,4 +63,16 @@
   .sep {
     color: var(--muted);
   }
+
+  /* Phone: one line per link instead of an awkward inline wrap. */
+  @media (max-width: 640px) {
+    .links {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-2);
+    }
+    .sep {
+      display: none;
+    }
+  }
 </style>

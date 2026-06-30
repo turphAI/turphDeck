@@ -1,12 +1,15 @@
 <script>
+  import SwipeDots from '../SwipeDots.svelte'
+
   let { content } = $props()
   const d = $derived(content.decisions)
+  let refusalsEl = $state()
 </script>
 
 <div class="slide">
   <h2>{d.title}</h2>
 
-  <ul class="refusals">
+  <ul class="refusals" bind:this={refusalsEl}>
     {#each d.refusals as r}
       <li class="card">
         <span class="what">{r.what}</span>
@@ -14,6 +17,8 @@
       </li>
     {/each}
   </ul>
+
+  <SwipeDots el={refusalsEl} count={d.refusals.length} />
 </div>
 
 <style>
@@ -65,5 +70,33 @@
     font-size: 0.9375rem;
     line-height: 1.5;
     color: var(--secondary);
+  }
+
+  /* Phone: one decision fills the width, swipe to the next. */
+  @media (max-width: 640px) {
+    /* Top-aligned like the other carousels — restore the headline→content gap
+       (desktop centers the cards vertically instead). */
+    h2 {
+      margin-bottom: var(--space-12);
+    }
+    .refusals {
+      flex: none;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: stretch;
+      max-width: none;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      margin-inline: calc(-1 * var(--space-6));
+      padding-inline: var(--space-6);
+      scrollbar-width: none;
+    }
+    .refusals::-webkit-scrollbar {
+      display: none;
+    }
+    .card {
+      flex: 0 0 80%;
+      scroll-snap-align: center;
+    }
   }
 </style>

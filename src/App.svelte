@@ -14,6 +14,14 @@
   let index = $state(0)
   const Current = $derived(slides[index])
 
+  // On small screens the stage scrolls instead of clipping — reset to the top
+  // of each new slide as you move through the deck.
+  let mainEl
+  $effect(() => {
+    index
+    if (mainEl) mainEl.scrollTop = 0
+  })
+
   function next() {
     if (index < slides.length - 1) index++
   }
@@ -37,7 +45,7 @@
 
 <svelte:window onkeydown={onKey} />
 
-<main class:on-bleed={bleedSlides.has(index)}>
+<main class:on-bleed={bleedSlides.has(index)} bind:this={mainEl}>
   {#key index}
     <section
       class="stage"
@@ -181,10 +189,28 @@
     background: #fbf6f2;
   }
 
-  @media (max-width: 640px) {
-    .stage {
-      padding: var(--space-12) var(--space-6);
+  /* Small screens: the stage scrolls instead of clipping. Dense slides can be
+     taller than the viewport — you swipe between slides, scroll within one. */
+  @media (max-width: 760px) {
+    /* main stays a fixed 100vh viewport and scrolls inside; the stage grows
+       past it. (If main grew with its content it would never scroll.) */
+    main {
+      overflow-y: auto;
     }
+    .stage {
+      height: auto;
+      min-height: 100vh;
+      /* Extra bottom room so the last content clears the fixed nav dots. */
+      padding: var(--space-12) var(--space-6) var(--space-18);
+    }
+    .stage.bleed,
+    .stage.centered-stage {
+      min-height: 100vh;
+      height: auto;
+    }
+  }
+
+  @media (max-width: 640px) {
     .hint .keys {
       display: none;
     }

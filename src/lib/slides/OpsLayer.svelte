@@ -303,4 +303,38 @@
     line-height: 1.3;
     color: rgba(80, 48, 34, 0.72);
   }
+
+  /* Small screens: drop the side-by-side and stack — illustration on top, the
+     key card beneath it. The hero leaves the absolute fill and flows so it can
+     grow taller than the viewport (the stage scrolls). */
+  @media (max-width: 760px) {
+    .ops-hero {
+      position: relative;
+      inset: auto;
+      min-height: 100vh;
+      height: auto;
+    }
+    .ops-head {
+      padding-top: var(--space-12);
+    }
+    .ops-body {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-8);
+      padding-bottom: var(--space-18);
+    }
+    .viz-wrap {
+      flex: none;
+      width: 100%;
+      max-width: 440px;
+      height: auto;
+      aspect-ratio: 1 / 1;
+      margin: 0 auto;
+    }
+    .key-card {
+      flex: none;
+      width: 100%;
+      max-width: none;
+    }
+  }
 </style>

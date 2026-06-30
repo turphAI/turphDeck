@@ -1,8 +1,11 @@
 <script>
+  import SwipeDots from '../SwipeDots.svelte'
+
   let { content } = $props()
   const a = $derived(content.architecture)
 
   const statusLabel = { live: 'Live', building: 'Building', planned: 'Planned' }
+  let bucketsEl = $state()
 </script>
 
 <div class="slide">
@@ -29,7 +32,7 @@
     <!-- producers below, bucketed by the opener's four problems -->
     <div class="tier producers">
       <span class="role">Producers</span>
-      <div class="buckets">
+      <div class="buckets" bind:this={bucketsEl}>
         {#each a.categories as cat}
           <div class="bucket">
             <span class="problem">{cat.problem}</span>
@@ -48,6 +51,8 @@
         {/each}
       </div>
     </div>
+
+    <SwipeDots el={bucketsEl} count={a.categories.length} />
   </div>
 
   <ul class="legend">
@@ -269,6 +274,29 @@
     }
     .consumer-card {
       padding: var(--space-6) var(--space-8);
+    }
+  }
+
+  /* Phone: the producers become a swipe row — one domain bucket at a time,
+     peeking the next. The consumer card + contract stay stacked above. */
+  @media (max-width: 640px) {
+    .buckets {
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      gap: var(--space-6);
+      margin-inline: calc(-1 * var(--space-6));
+      padding-inline: var(--space-6);
+      scrollbar-width: none;
+    }
+    .buckets::-webkit-scrollbar {
+      display: none;
+    }
+    .bucket {
+      flex: 0 0 64%;
+      max-width: none;
+      scroll-snap-align: center;
     }
   }
 </style>

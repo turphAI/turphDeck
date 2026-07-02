@@ -56,11 +56,13 @@ export const content = {
   },
 
   ops: {
-    title: 'A layer of agents keeps the suite current.',
+    title: 'Agents propose. The human decides.',
     layerLabel: 'the ops layer',
-    // The layer runs four phases. Each phase names the agent that does its
+    // The layer runs five phases. Each phase names the agent that does its
     // work, so the agent ↔ phase link is explicit. Consume is its own phase:
     // proving the ecosystem with data — manual and outside calls — is real work.
+    // Propose is the widening aperture: next → become → start, one motion at
+    // three altitudes (journal 027). The human decides at every one.
     phases: [
       {
         name: 'Sense',
@@ -75,9 +77,15 @@ export const content = {
       {
         name: 'Assess',
         blurb: 'Judge what changed',
+        agents: [{ name: 'Sweeper', note: 'freshness · quality · health', status: 'live' }],
+      },
+      {
+        name: 'Propose',
+        blurb: 'Widen the aperture',
         agents: [
-          { name: 'Sweeper', note: 'freshness · quality · health', status: 'live' },
-          { name: 'Navigator', note: 'next-best-work', status: 'live' },
+          { name: 'Navigator', note: 'what to do next', status: 'live' },
+          { name: 'Opportunity', note: 'what to become', status: 'live' },
+          { name: 'Seed', note: 'what to start', status: 'planned' },
         ],
       },
       {
@@ -87,7 +95,10 @@ export const content = {
         agents: [],
       },
     ],
-    decideNote: 'Agents sense, consume, and assess — the human alone decides. No auto-change.',
+    decideNote: 'Agents sense, consume, assess, and propose — the human alone decides. No auto-change.',
+    // Marks every not-yet-live agent on this slide (Concierge, Seed) — the deck's
+    // live-vs-planned rule, honored here for the first time.
+    plannedNote: 'on deck — designed, not yet live',
   },
 
   foundation: {

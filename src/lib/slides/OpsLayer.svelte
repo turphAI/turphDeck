@@ -3,9 +3,13 @@
 
   let { content } = $props()
   const o = $derived(content.ops)
+  const hasPlanned = $derived(
+    o.phases.some((ph) => ph.agents.some((a) => a.status === 'planned'))
+  )
 
   const SIZE = 820
-  const PHASE_VALUE = 10 // Sense / Consume / Assess — all equal
+  const PHASE_VALUE = 10 // Sense / Consume / Assess — single- or double-agent
+  const WIDE_VALUE = 15 // a phase holding three agents (Propose) needs more room
   const DECIDE_VALUE = 16 // a touch bigger, not overpowering
   const ANGLE = (21 * Math.PI) / 180 // rotate off-axis so it isn't a grid
 
@@ -17,7 +21,7 @@
       children: o.phases.map((ph) => ({
         name: ph.name,
         human: ph.human || false,
-        value: ph.human ? DECIDE_VALUE : PHASE_VALUE,
+        value: ph.human ? DECIDE_VALUE : ph.agents.length >= 3 ? WIDE_VALUE : PHASE_VALUE,
       })),
     }
     const packed = pack()
@@ -43,7 +47,10 @@
     })
 
     const phaseNodes = nodes.filter((n) => n.depth === 1)
-    const Rp = (phaseNodes.find((n) => !n.data.human) || phaseNodes[0]).r
+    // Size agents off the SMALLEST non-human phase so single-agent phases stay
+    // in proportion even though Propose's circle is larger.
+    const nonHuman = phaseNodes.filter((n) => !n.data.human)
+    const Rp = Math.min(...nonHuman.map((n) => n.r))
     const agentR = Rp * 0.36
 
     const agents = []
@@ -58,9 +65,23 @@
         agents.push({ x: pn.x + ox * pn.r * 0.45, y: pn.y + oy * pn.r * 0.45, name: 'Human' })
       } else if (ph.agents.length === 1) {
         agents.push({ x: pn.x + ox * pn.r * 0.34, y: pn.y + oy * pn.r * 0.34, name: ph.agents[0].name })
-      } else {
+      } else if (ph.agents.length === 2) {
         agents.push({ x: pn.x + tx * pn.r * 0.42, y: pn.y + ty * pn.r * 0.42, name: ph.agents[0].name })
         agents.push({ x: pn.x - tx * pn.r * 0.42, y: pn.y - ty * pn.r * 0.42, name: ph.agents[1].name })
+      } else {
+        // Three agents (Propose): a triangle with its apex pushed outward toward
+        // the membrane, the other two flanking inward. The widening aperture.
+        agents.push({ x: pn.x + ox * pn.r * 0.44, y: pn.y + oy * pn.r * 0.44, name: ph.agents[0].name })
+        agents.push({
+          x: pn.x + (tx * 0.46 - ox * 0.2) * pn.r,
+          y: pn.y + (ty * 0.46 - oy * 0.2) * pn.r,
+          name: ph.agents[1].name,
+        })
+        agents.push({
+          x: pn.x + (-tx * 0.46 - ox * 0.2) * pn.r,
+          y: pn.y + (-ty * 0.46 - oy * 0.2) * pn.r,
+          name: ph.agents[2].name,
+        })
       }
     }
 
@@ -124,7 +145,9 @@
               {:else}
                 {#each ph.agents as a}
                   <li>
-                    <span class="ka-name">{a.name}</span>
+                    <span class="ka-name"
+                      >{a.name}{#if a.status === 'planned'}<span class="ka-star">*</span>{/if}</span
+                    >
                     <span class="ka-note">{a.note}</span>
                   </li>
                 {/each}
@@ -133,6 +156,9 @@
           </li>
         {/each}
       </ul>
+      {#if hasPlanned}
+        <p class="key-foot"><span class="ka-star">*</span> {o.plannedNote}</p>
+      {/if}
     </aside>
   </div>
 </div>
@@ -302,6 +328,20 @@
     font-size: 12.5px;
     line-height: 1.3;
     color: rgba(80, 48, 34, 0.72);
+  }
+
+  .ka-star {
+    color: var(--accent, #a65f3f);
+    font-weight: 600;
+  }
+
+  /* The on-deck footnote — sits below the phase list, set apart by the largest
+     gap in the card so it reads as a footnote, not another phase. */
+  .key-foot {
+    margin: var(--space-6) 0 0;
+    font-size: 12px;
+    line-height: 1.3;
+    color: rgba(80, 48, 34, 0.66);
   }
 
   /* Small screens: drop the side-by-side and stack — illustration on top, the
